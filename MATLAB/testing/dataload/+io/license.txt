@@ -1,0 +1,1 @@
+Collin Pecora (2025). ZipFile (https://github.com/RocketWrench/ZipFile/releases/tag/1.04)
