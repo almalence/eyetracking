@@ -172,8 +172,8 @@ function ei = getEyePose(im, ei)
     iris_sctr_up = pi/12; % angle from horizontal up to which iris is usually visible  15 degree up
     iris_sctr_dn = pi/6;  %                                                            30 degree down
     iris_sctr = iris_sctr_up + iris_sctr_dn;
-    iris_d1 = linspace(pi+iris_sctr_up, pi-iris_sctr_dn, min_iris_r) - rotrad;
-    iris_d2 = linspace(  -iris_sctr_up,    iris_sctr_dn, min_iris_r) - rotrad;
+    iris_d1 = linspace(pi+iris_sctr_up, pi-iris_sctr_dn, 80) - rotrad;
+    iris_d2 = linspace(  -iris_sctr_up,    iris_sctr_dn, 80) - rotrad;
     iris_scl1 = ellipseScales(iris_d1, phi_minor, ei.el_ratio);
     iris_scl2 = ellipseScales(iris_d2, phi_minor, ei.el_ratio);
 
