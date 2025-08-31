@@ -168,5 +168,5 @@ Calling sequence to perform eye tracking:
 For more detailed information, take a look at:
 - [API documentation](docs/api-documentation-for-eye-tracking.md)
 - [SDK/EyeTracking.h](SDK/EyeTracking.h)
-- [Command-line calibraiton code](SDK/calibraiton.c)
+- [Command-line calibraiton code](SDK/calibration.c)
 - [Command-line eye pose estimation test](SDK/test.c)
