@@ -7,12 +7,6 @@
 
 #include "EyeTracking.h"
 
-#define IMG_DEBUG
-
-#ifdef IMG_DEBUG
-	size_t dbgimlen;
-	uint8_t *dbgim;
-#endif
 
 void print_usage()
 {
@@ -83,19 +77,6 @@ int main (int ac, char *av[])
 		fseek(f, -wi*hi, SEEK_END);	// header skip, assuming nothing after pixel values
 		for (int y=hi-1; y>=0; --y)	// bmp data is bottom-up
 			n = fread(cam[i]+y*wi, wi, 1, f);
-
-#ifdef IMG_DEBUG
-		if (i==0)
-		{
-			fseek(f, -wi*hi, SEEK_END);
-			dbgimlen = ftell(f)+w*h;
-			dbgim = (uint8_t*)malloc(dbgimlen);
-			fseek(f, 0, SEEK_SET);
-			n = fread(dbgim, dbgimlen, 1, f);
-			*(uint32_t*)(dbgim+0x12) = w;
-			*(uint32_t*)(dbgim+0x16) = h;
-		}
-#endif
 
 		fclose(f);
 	}
