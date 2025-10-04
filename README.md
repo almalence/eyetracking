@@ -6,7 +6,7 @@ https://github.com/user-attachments/assets/391336a3-5567-4fe7-afb3-873ab0674474
 
 
 
-Check [publication](https://www.techrxiv.org/users/961744/articles/1330744-eye-pose-estimation-and-tracking-using-iris-as-a-base-feature) for the method details.
+Check [publication](https://ieeexplore.ieee.org/document/11189046) for the method details.
 
 Performance:
 - On a 3GHz 12th generation Intel CPU the single 640x480 frame processing takes **350µs** on a **single core**.
