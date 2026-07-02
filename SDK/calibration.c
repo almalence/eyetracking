@@ -43,7 +43,8 @@ int main (int ac, char *av[])
 	sprintf(lenfmt, "%%0%dd", numlen);
 
 
-    // initializing with values reasonable for off-axis camera, 640x480 camera frame
+	// SOMNIUM_VR1
+    // initializing with values reasonable for off-axis camera, 540x400 camera frame
     int valid_area[6] = { 280, 200,  230, 200,  280,  128 };
     float cam2hmd[6] = { 0, 22, 0,  25, 0, 48 };
     // Negative sign in camera HFOV indicates chief ray converging from camera entrance pupil towards eye

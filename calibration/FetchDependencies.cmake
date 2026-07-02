@@ -5,7 +5,7 @@ set(KHR_OPENXR_SDK_REPO_DIR "${CMAKE_SOURCE_DIR}/3rd/OpenXR-SDK")
 if(NOT EXISTS "${KHR_OPENXR_SDK_REPO_DIR}")
     message(STATUS "Cloning OpenXR-SDK repository...")
     execute_process(
-        COMMAND git clone https://github.com/KhronosGroup/OpenXR-SDK.git ${KHR_OPENXR_SDK_REPO_DIR}
+        COMMAND git clone https://github.com/khronosgroup/Openxr-sdk.git ${KHR_OPENXR_SDK_REPO_DIR}
         RESULT_VARIABLE result
     )
     if(result)

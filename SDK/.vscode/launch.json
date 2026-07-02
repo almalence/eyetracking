@@ -8,8 +8,8 @@
         "type": "cppdbg",
         "request": "launch",
         "program": "${command:cmake.launchTargetPath}",
-        "args": ["01\\00000.bmp", "1000", "540", "400"],
-// use this line for calibration run        "args": ["calib\\00000.bmp", "199", "540", "400"],
+        "args": ["01/00000.bmp", "1000", "540", "400"],
+//        "args": ["calib/00000.bmp", "199", "540", "400"], // use this line for Somnium VR1 calibration run
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}/out",
         "environment": [],

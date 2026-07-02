@@ -36,13 +36,15 @@ int CaptureModule::startCapture()
             int height = static_cast<int>( cap.get(cv::CAP_PROP_FRAME_HEIGHT) );
             int fps = static_cast<int>( cap.get(cv::CAP_PROP_FPS) );
 
-            if ((width==640) && (height==400) && (fps==50)) break; // ET camera found
+            if ((width==CAM_WIDTH) && (height==CAM_HEIGHT) && (fps==CAM_FPS)) break; // ET camera found
         }
         cap.release();
     }    
 
+#ifdef SOMNIUM_VR1
     cap.set(cv::CAP_PROP_CONVERT_RGB, false);
     cap.set(cv::CAP_PROP_FRAME_WIDTH, CAM_WIDTH);
+#endif
 
     // Check if the camera opened successfully
     if (!cap.isOpened()) {
@@ -61,12 +63,15 @@ int CaptureModule::startCapture()
         return -1;
     }
 
-    // initializing with values reasonable for off-axis camera, 640x480 camera frame
+    // initializing with values reasonable for off-axis camera
+#ifdef SOMNIUM_VR1
     int valid_area[6] = { 280, 200,  230, 200,  280,  128 };
     float cam2hmd[6] = { 0, 22, 0,  25, 0, 48 };
+
     // Negative sign in camera HFOV indicates chief ray converging from camera entrance pupil towards eye
     // This may happen in cases where camera is behind HMD lens and image is formed through some sort of concave mirror surface
     ei = initEyeConfig(DEWARP_FRAME_WIDTH, DEWARP_FRAME_HEIGHT, 65, 120, valid_area, -1, -30, 0, CAM_FPS, cam2hmd);
+#endif
 
     if (ei == NULL) {
         std::cerr << "Initialization failed." << std::endl;
@@ -100,7 +105,9 @@ void CaptureModule::gazeData(float* gaze_vec)
 }
 
 // supplementary function to rectify through-the-lens camera view of Somnium VR1
-void somniumCamDewarp(uint8_t* in, uint8_t* out, int eye)
+#ifdef SOMNIUM_VR1
+// supplementary function to rectify through-the-lens camera view of Somnium VR1
+void CameraDewarp(uint8_t* in, uint8_t* out, int eye)
 {
     // center of the output frame in input frame
     const int xc = 360;
@@ -160,6 +167,7 @@ void somniumCamDewarp(uint8_t* in, uint8_t* out, int eye)
         }
     }
 }
+#endif
 
 void CaptureModule::setGazeReferenceSource(std::shared_ptr<InteractionModule> obj, GazeReferenceFunction grefFunc)
 {
@@ -199,38 +207,38 @@ void CaptureModule::runCapture()
             if (state == CaptureProgramState::CollectCalibration)
             {
                 // dewarp frame and store for calibration, use 25-30fps for calibration
-                if ((frame_idx % (CAM_FPS / 25) == 0) && (calib_frames < MAX_CAL_FRAMES))
+                if ((frame_idx % (CAM_FPS / CALIB_FPS) == 0) && (calib_frames < MAX_CAL_FRAMES))
                 {
                     frames[calib_frames] = (uint8_t*)malloc(DEWARP_FRAME_WIDTH * DEWARP_FRAME_HEIGHT);
                     if (frames[calib_frames])
                     {
                         // dump frame
-                        //std::stringstream frame_fname;
-                        //frame_fname << std::setfill('0')<< std::setw(5) << calib_frames;
-                        //frame_fname << ".bmp";
-                        //cv::imwrite(frame_fname.str(), frame);
-                        //// update dataset csv
-                        //char csvName[] = "01.csv";
-                        //std::ifstream csvFile(csvName);
-                        //std::ofstream csv;
-                        //csv.open(csvName, std::ios_base::app);
-                        //float angle[2];
-                        //int idx;
-                        //if (m_grefFunction)
+                        // std::stringstream frame_fname;
+                        // frame_fname << std::setfill('0')<< std::setw(5) << calib_frames;
+                        // frame_fname << ".bmp";
+                        // cv::imwrite(frame_fname.str(), frame);
+                        // // update dataset csv
+                        // char csvName[] = "01.csv";
+                        // std::ifstream csvFile(csvName);
+                        // std::ofstream csv;
+                        // csv.open(csvName, std::ios_base::app);
+                        // float angle[2];
+                        // int idx;
+                        // if (m_grefFunction)
                         //    (m_interacionModuleObj.get()->*m_grefFunction)(angle, &idx);
-                        //if (!csvFile.good())    // write header if new file
+                        // if (!csvFile.good())    // write header if new file
                         //    csv << "imagefile, eye, vid, gaze_x, gaze_y" << std::endl;
-                        //csv << frame_fname.str() << ",LR," << idx << "," << angle[0] << "," << angle[1] << std::endl;
-                        //csv.close();
+                        // csv << frame_fname.str() << ",LR," << idx << "," << angle[0] << "," << angle[1] << std::endl;
+                        // csv.close();
 
-                        somniumCamDewarp(frame.data, frames[calib_frames], 0);
+                        CameraDewarp(frame.data, frames[calib_frames], 0);
 
                         // dump dewarped frame
-                        //cv::Mat f_dewarp(DEWARP_FRAME_HEIGHT, DEWARP_FRAME_WIDTH, CV_8UC1, frames[calib_frames]);
-                        //std::stringstream frame_fname;
-                        //frame_fname << std::setfill('0') << std::setw(5) << calib_frames;
-                        //frame_fname << ".bmp";
-                        //cv::imwrite(frame_fname.str(), f_dewarp);
+                        // cv::Mat f_dewarp(DEWARP_FRAME_HEIGHT, DEWARP_FRAME_WIDTH, CV_8UC1, frames[calib_frames]);
+                        // std::stringstream frame_fname;
+                        // frame_fname << std::setfill('0') << std::setw(5) << calib_frames;
+                        // frame_fname << ".bmp";
+                        // cv::imwrite(frame_fname.str(), f_dewarp);
 
                         ++calib_frames;
                     }
@@ -240,7 +248,7 @@ void CaptureModule::runCapture()
             if (state == CaptureProgramState::EstimateEyePose)
             {
                 // call ET processing
-                somniumCamDewarp(frame.data, dewarped_frame, 0);
+                CameraDewarp(frame.data, dewarped_frame, 0);
                 getEyePose(ei, dewarped_frame, NULL, 0);
 
                 {

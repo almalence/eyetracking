@@ -23,10 +23,12 @@
 #ifdef SOMNIUM_VR1
 #define CAM_FPS       50
 #define CAM_WIDTH     640
+#define CAM_HEIGHT    400
 #define FRAME_WIDTH   1280
 #define FRAME_HEIGHT  400
 #define DEWARP_FRAME_WIDTH   540
 #define DEWARP_FRAME_HEIGHT  400
+#define CALIB_FPS     25
 #endif
 
 #define MAX_CAL_FRAMES  2000    // use at most that many frames for calibration (normally 25-30fps * 5 positions * 2 sec/pos = 300)

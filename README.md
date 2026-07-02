@@ -13,9 +13,11 @@ Performance:
 - On XR-specific Snapdragon XR2, 640x480 camera frame: **465µs** on a **single core**. This means that **stereo eye tracking at a 120Hz** refresh rate utilizes under **2% of the total CPU at less than 0.5ms latency**.
 
 
-# Build
+# Prerequisites
 
-## Prerequisites (for eye calibration application only)
+git, cmake, gcc
+
+## For eye calibration application only:
 
 - ### MSVC 2022 (MSVC 2019 should work as well, but never tested)
 
@@ -30,14 +32,15 @@ Make sure OpenCV_DIR points to where the `OpenCVConfig.cmake` is!
 - ### OpenXR
 OpenXR SDK is automatically fetched and built during the cmake configure step.
 
-- ### Eye tracking camera
-
+- ### Set Eye tracking camera parameters
 Code was tested with the Somnium VR1 eye tracking camera.
 
-For camera accessible via OpenCV - adjust the default camera parameters in `src/capture_module.cpp/CaptureModule::startCapture()`.
-For other cases - modify `CaptureModule::startCapture()` and `CaptureModule::runCapture()` methods in `src/capture_module.cpp`.
+For the cameras accessible via OpenCV - adjust the camera and frame parameters in `src/capture_module.h`.
+For cameras not accessible via OpenCV - you'll have to modify `CaptureModule::startCapture()` and `CaptureModule::runCapture()` methods in `src/capture_module.cpp`.
 
-Also, modify frame parameters in `src/capture_module.h` and camera parameters in call to `initEyeConfig()` in `src/main.cpp`.
+Modify `valid_area[]` and `cam2hmd[]` before call to `initEyeConfig()` in `src/capture_module.cpp/CaptureModule::startCapture()` to match frame area to process and your camera placement.
+
+# Build
 
 ## Command-line test/calibration tools
 
@@ -65,6 +68,7 @@ and rename it to `libEyeTrack.lib`
 Also update `EyeTracking.h` in the same place, if needed.
 
 ## Calibration application, on Windows
+Within `calibration` folder:
 ```
 cmake -S . -B ./CMAKE_BUILD -D CMAKE_BUILD_TYPE=Release
 ```
@@ -80,7 +84,36 @@ Note: Camera capture was not implemented in Android, source code modifications n
 
 # Run
 
-## Running MATLAB code
+## Running command-line C code
+```
+cd SDK\out
+build\release\EyeCalibration.exe calib\00000.bmp 199 540 400
+build\release\EyeTracking.exe 01\00000.bmp 1000 540 400
+```
+
+## Running calibration app on HMD
+
+### Windows Somnium VR1
+
+To turn on eye-tracking IR-leds on Somnium VR1:
+- Start Somnium VR Tool
+- Go to Settings / Eyes
+- Perform the Eye Tracking calibration (has nothing to do with the eye tracking of this project, only to enable eye-tracking switch in settings).
+- Start Windows 'Camera' application and switch to Somnium Eye Tracking camera (frames will look green).
+- Enable eye-tracking switch in the Somnium VR Tool settings.
+- Exit windows 'Camera' app.
+
+The above sequence of steps will keep IR-leds turned on, while allowing 3rd party apps to access the eye-tracking camera at the same time.
+
+Run: CMAKE_BUILD\Release\EyeTrackerCalibrationApp.exe 
+
+### Android HMD
+
+Use Android Studio to build and run the calibration app.
+Note: only graphic (calibration dots) is displayed in Android version, camera capture was never tested, and no calibration code implemented (should be an easy copy/paste from Windows version).
+
+
+## Running MATLAB code (to understand/modify the algo)
 
 Before running MATLAB code, combine zip volumes with captured frames into single zip file:
 ```
@@ -100,36 +133,6 @@ in Matlab:
 > test
 ```
 Note: test run will show intermediate processing images requiring you to hit a key to proceed to the next frame for the first 20 frames.
-
-
-## Running command-line C code
-```
-cd SDK\out
-build\release\EyeCalibration.exe calib\00000.bmp 199 540 400
-build\release\EyeTracking.exe 01\00000.bmp 1000 540 400
-```
-
-## Running calibration app on HMD
-
-### Windows (Somnium VR1)
-
-To turn on eye-tracking IR-leds on Somnium VR1:
-- Start Somnium VR Tool
-- Go to Settings / Eyes
-- Perform the Eye Tracking calibration (has nothing to do with the eye tracking of this project, only to enable eye-tracking switch in settings).
-- Start Windows 'Camera' application and switch to Somnium Eye Tracking camera (frames will look green).
-- Enable eye-tracking switch in the Somnium VR Tool settings.
-- Exit windows 'Camera' app.
-
-The above sequence of steps will keep IR-leds turned on, while allowing 3rd party apps to access the eye-tracking camera at the same time.
-
-Run: CMAKE_BUILD\Release\EyeTrackerCalibrationApp.exe 
-
-
-### Android HMD
-
-Use Android Studio to build and run the calibration app.
-Note: only graphic (calibration dots) is displayed in Android version, camera capture was never tested, and no calibration code implemented (should be an easy copy/paste from Windows version).
 
 
 # Use in your own projects

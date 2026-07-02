@@ -250,7 +250,7 @@ eye_cfg * initEyeConfig(
     );
 
 
-// Aaply calibrated eye parameters
+// Apply calibrated eye parameters
 //
 // Default values:
 // iris2hrot       11

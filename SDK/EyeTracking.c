@@ -68,6 +68,8 @@ void sincosf (float __x, float *p_sin, float *p_cos)
   *p_sin = (float) s;
   *p_cos = (float) c;
 }
+#else
+void sincosf (float __x, float *p_sin, float *p_cos);   // somehow didn't found this in math.h with gcc 16 under linux, but it is present in libm
 #endif
 
 // using volatile here to prevent sinf/cosf optimization into sincosf, which is problematic with MSVC linkage
